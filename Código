@@ -1,0 +1,50 @@
+// C++ code
+//
+
+//Importando a biblioteca LiquidCrystal para utilizar o LCD
+#include <LiquidCrystal.h>
+
+//Criando a instância lcd
+LiquidCrystal lcd(2,4,5,6,7,8);
+//Definindo o tempo inicial
+unsigned long tempo_anterior = 0;
+
+void setup()
+{
+  //Definindo o pino do LED
+  pinMode(9, OUTPUT);
+  //Iniciando o LCD
+  lcd.begin(16,2);
+  //Iniciando o monitor serial
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //Registrando o tempo que o código está rodando
+  unsigned long tempo_atual = millis();
+  //Registrando a temperatura medida
+  int leitura = analogRead(A0);
+  float tensao = leitura * 5.0;
+  tensao /= 1024.0;
+  float temperatura = (tensao - 0.5) * 100 ;
+  //Condição que se torna True após 1000 ms
+  if (tempo_atual - tempo_anterior >= 1000){
+    //Resetando o cursor e realizando o print da temperatura
+    lcd.setCursor(0,0);
+    lcd.print(temperatura);
+    Serial.print(tempo_atual);Serial.print(",");
+    Serial.println(temperatura);
+    //Resetando o tempo inicial
+    tempo_anterior = tempo_atual;
+    //Condição para ativar o LED caso a temperatura seja menor ou igual que 75ºC
+    if (temperatura <=75){
+      digitalWrite(9, HIGH);
+    }
+    else{
+      digitalWrite(9, LOW);
+    }
+    
+  }
+      
+}
